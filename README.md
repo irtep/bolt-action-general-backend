@@ -25,3 +25,5 @@ npm start
 
     GET /api/auth/me - Get current user
 
+    GET curl http://localhost:5509/api/auth - all users
+

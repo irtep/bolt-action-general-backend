@@ -5,11 +5,14 @@ import { db } from '../database/database';
 import { LoginRequest, RegisterRequest, UserWithoutPassword } from '../models/User';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
 import { config } from '../config';
+import dotenv from 'dotenv';
 
+dotenv.config();
 const router = express.Router();
 
 // Login
 router.post('/login', async (req: express.Request<{}, {}, LoginRequest>, res) => {
+    console.log('got login: ', req.body);
     try {
         const { username, password } = req.body;
 
@@ -65,6 +68,7 @@ router.post('/login', async (req: express.Request<{}, {}, LoginRequest>, res) =>
 
 // Register - Also fixed the SQL query (had too many placeholders)
 router.post('/register', async (req: express.Request<{}, {}, RegisterRequest>, res) => {
+    console.log('got register: ', req.body);
     try {
         const { username, password, auth } = req.body;
 
@@ -74,7 +78,7 @@ router.post('/register', async (req: express.Request<{}, {}, RegisterRequest>, r
         }
 
         // Check authorization code (you can modify this logic)
-        if (auth !== 'YOUR_REGISTRATION_CODE') {
+        if (auth !== process.env.AUTH_CODE) {
             res.status(403).json({ error: 'Invalid authorization code' });
             return;
         }
@@ -119,6 +123,7 @@ router.post('/register', async (req: express.Request<{}, {}, RegisterRequest>, r
 
 // Logout (client-side token removal - this is just a placeholder)
 router.post('/logout', authenticateToken, (req: AuthRequest, res) => {
+    console.log('got logout', req.body);
     // In a real app, you might want to maintain a blacklist of tokens
     // For now, we just confirm the logout request
     res.json({ message: 'Logged out successfully' });
@@ -126,7 +131,36 @@ router.post('/logout', authenticateToken, (req: AuthRequest, res) => {
 
 // Get current user
 router.get('/me', authenticateToken, (req: AuthRequest, res) => {
+    console.log('get me: ', req.body);
     res.json({ user: req.user });
+});
+
+// all users
+
+interface SafeUser {
+  id: number;
+  username: string;
+  admin: boolean;
+  test_account: boolean;
+  created_at: string;
+}
+
+router.get('/', (req, res) => {
+    db.all(
+        'SELECT id, username, admin, test_account, created_at FROM users',
+        [],
+        (err, users: SafeUser[]) => {
+            if (err) {
+                console.error('Database error:', err);
+                res.status(500).json({ error: 'Database error' });
+                return;
+            }
+
+            res.json({
+                users
+            });
+        }
+    );
 });
 
 export default router;
