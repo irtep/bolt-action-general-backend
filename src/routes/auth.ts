@@ -34,19 +34,20 @@ router.post('/login', async (req: express.Request<{}, {}, LoginRequest>, res) =>
                     res.status(401).json({ error: 'Invalid username or password' });
                     return;
                 }
-
+                console.log('found');
                 // Fixed JWT sign call
+                console.log('confi: ', config.jwt.secret);
                 const token = jwt.sign(
                     {
                         id: user.id,
-                        username: user.username,
-                        admin: user.admin
+                        username: user.username
                     },
                     config.jwt.secret,
                     {
                         expiresIn: config.jwt.expiresIn as jwt.SignOptions['expiresIn']
                     }
                 );
+                console.log('made token');
 
                 const userWithoutPassword: UserWithoutPassword = {
                     id: user.id,
@@ -54,7 +55,7 @@ router.post('/login', async (req: express.Request<{}, {}, LoginRequest>, res) =>
                     admin: user.admin,
                     created_at: user.created_at
                 };
-
+                console.log('responding');
                 res.json({
                     token,
                     user: userWithoutPassword
@@ -161,6 +162,80 @@ router.get('/', (req, res) => {
             });
         }
     );
+});
+
+// Delete user by username
+router.delete('/:username', /*authenticateToken,*/ (req: AuthRequest, res) => {
+    const { username } = req.params;
+
+    // Optional: Prevent users from deleting themselves or add admin check
+    if (req.user?.username === username) {
+        res.status(400).json({ error: 'Cannot delete your own account' });
+        return;
+    }
+
+    // Optional: Only allow admins to delete users
+
+    if (!req.user?.admin) {
+        res.status(403).json({ error: 'Admin access required' });
+        return;
+    }
+    /*
+    db.run(
+        'DELETE FROM users WHERE username = ?',
+        [username],
+        function(err) {
+            if (err) {
+                res.status(500).json({ error: 'Database error' });
+                return;
+            }
+
+            if (this.changes === 0) {
+                res.status(404).json({ error: 'User not found' });
+                return;
+            }
+
+            res.json({ message: `User ${username} deleted successfully` });
+        }
+    );
+    */
+});
+
+// Delete user by ID
+router.delete('/id/:id', /*authenticateToken,*/ (req: AuthRequest, res) => {
+    const { id } = req.params;
+
+    // Optional: Prevent users from deleting themselves
+    if (req.user?.id === parseInt(id)) {
+        res.status(400).json({ error: 'Cannot delete your own account' });
+        return;
+    }
+
+    // Optional: Only allow admins to delete users
+
+    if (!req.user?.admin) {
+        res.status(403).json({ error: 'Admin access required' });
+        return;
+    }
+    /*
+    db.run(
+        'DELETE FROM users WHERE id = ?',
+        [id],
+        function(err) {
+            if (err) {
+                res.status(500).json({ error: 'Database error' });
+                return;
+            }
+
+            if (this.changes === 0) {
+                res.status(404).json({ error: 'User not found' });
+                return;
+            }
+
+            res.json({ message: `User with ID ${id} deleted successfully` });
+        }
+    );
+    */
 });
 
 export default router;

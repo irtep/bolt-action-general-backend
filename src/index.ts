@@ -5,6 +5,7 @@ import path from 'path';
 import dotenv from 'dotenv';
 
 import authRoutes from './routes/auth';
+import armiesRoutes from './routes/armies';
 
 dotenv.config();
 
@@ -33,6 +34,7 @@ app.use(express.static(path.join(__dirname, '../../frontend/dist')));
 
 // API Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/armies', armiesRoutes);
 
 // Serve React app for all other routes
 app.get('*', (req, res) => {

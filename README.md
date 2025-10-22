@@ -27,3 +27,4 @@ npm start
 
     GET curl http://localhost:5509/api/auth - all users
 
+    DELETE curl -X DELETE http://localhost:5509/api/auth/petri
