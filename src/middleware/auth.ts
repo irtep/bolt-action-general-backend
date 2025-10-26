@@ -4,8 +4,6 @@ import jwt from 'jsonwebtoken';
 export interface AuthUser {
   id: number;
   username: string;
-  admin: boolean;
-  test_account: boolean;
 }
 
 // Make AuthRequest generic
@@ -15,9 +13,10 @@ export interface AuthRequest<P = any, ResBody = any, ReqBody = any, ReqQuery = a
 }
 
 export const authenticateToken = (req: AuthRequest, res: Response, next: NextFunction): void => {
+  console.log('auth request');
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
-
+  console.log('with token: ', token);
   if (!token) {
     res.status(401).json({ error: 'Access token required' });
     return;

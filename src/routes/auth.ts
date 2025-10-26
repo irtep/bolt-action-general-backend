@@ -52,7 +52,6 @@ router.post('/login', async (req: express.Request<{}, {}, LoginRequest>, res) =>
                 const userWithoutPassword: UserWithoutPassword = {
                     id: user.id,
                     username: user.username,
-                    admin: user.admin,
                     created_at: user.created_at
                 };
                 console.log('responding');
@@ -67,7 +66,7 @@ router.post('/login', async (req: express.Request<{}, {}, LoginRequest>, res) =>
     }
 });
 
-// Register - Also fixed the SQL query (had too many placeholders)
+// Register
 router.post('/register', async (req: express.Request<{}, {}, RegisterRequest>, res) => {
     console.log('got register: ', req.body);
     try {
@@ -141,8 +140,6 @@ router.get('/me', authenticateToken, (req: AuthRequest, res) => {
 interface SafeUser {
   id: number;
   username: string;
-  admin: boolean;
-  test_account: boolean;
   created_at: string;
 }
 
@@ -175,11 +172,12 @@ router.delete('/:username', /*authenticateToken,*/ (req: AuthRequest, res) => {
     }
 
     // Optional: Only allow admins to delete users
-
+/*
     if (!req.user?.admin) {
         res.status(403).json({ error: 'Admin access required' });
         return;
     }
+  */
     /*
     db.run(
         'DELETE FROM users WHERE username = ?',
@@ -212,11 +210,12 @@ router.delete('/id/:id', /*authenticateToken,*/ (req: AuthRequest, res) => {
     }
 
     // Optional: Only allow admins to delete users
-
+/*
     if (!req.user?.admin) {
         res.status(403).json({ error: 'Admin access required' });
         return;
     }
+*/
     /*
     db.run(
         'DELETE FROM users WHERE id = ?',

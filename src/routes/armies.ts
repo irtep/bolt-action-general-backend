@@ -30,6 +30,7 @@ db.run(`
 
 // Get all armies for current user
 router.get('/', authenticateToken, (req: AuthRequest, res) => {
+  console.log('getting armies of user');
   db.all(
     'SELECT * FROM armies WHERE userId = ? ORDER BY createdAt DESC',
     [req.user?.id],
@@ -45,7 +46,7 @@ router.get('/', authenticateToken, (req: AuthRequest, res) => {
         ...army,
         units: JSON.parse(army.units)
       }));
-
+      console.log('armies: ', parsedArmies);
       res.json({ armies: parsedArmies });
     }
   );
@@ -54,7 +55,7 @@ router.get('/', authenticateToken, (req: AuthRequest, res) => {
 // Get specific army by ID
 router.get('/:id', authenticateToken, (req: AuthRequest, res) => {
   const { id } = req.params;
-
+  console.log('specific army of id request', id);
   db.get(
     'SELECT * FROM armies WHERE id = ? AND userId = ?',
     [id, req.user?.id],
@@ -75,7 +76,7 @@ router.get('/:id', authenticateToken, (req: AuthRequest, res) => {
         ...army,
         units: JSON.parse(army.units)
       };
-
+      console.log('sending: ', parsedArmy);
       res.json({ army: parsedArmy });
     }
   );
@@ -83,9 +84,10 @@ router.get('/:id', authenticateToken, (req: AuthRequest, res) => {
 
 // Create new army
 router.post('/', authenticateToken, (req: AuthRequest<{}, {}, CreateArmyRequest>, res) => {
+  console.log('create army post');
   try {
     const { name, nation, pointsLimit, units, totalPoints } = req.body;
-
+    
     if (!name || !nation || !pointsLimit || !units) {
       res.status(400).json({ error: 'All fields are required' });
       return;
@@ -128,6 +130,7 @@ router.post('/', authenticateToken, (req: AuthRequest<{}, {}, CreateArmyRequest>
 
 // Update army
 router.put('/:id', authenticateToken, (req: AuthRequest<{ id: string }, {}, UpdateArmyRequest>, res) => {
+  console.log('update army post');
   try {
     const { id } = req.params;
     const { name, nation, pointsLimit, units, totalPoints } = req.body;
@@ -191,6 +194,7 @@ router.put('/:id', authenticateToken, (req: AuthRequest<{ id: string }, {}, Upda
 
 // Delete army
 router.delete('/:id', authenticateToken, (req: AuthRequest, res) => {
+  console.log('delete army post');
   const { id } = req.params;
 
   db.run(

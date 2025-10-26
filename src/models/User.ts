@@ -2,14 +2,12 @@ export interface User {
   id: number;
   username: string;
   password_hash: string;
-  admin: boolean;
   created_at: string;
 }
 
 export interface UserWithoutPassword {
   id: number;
   username: string;
-  admin: boolean;
   created_at: string;
 }
 
