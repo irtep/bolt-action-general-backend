@@ -43,6 +43,7 @@ export interface ArmyList {
 
 export interface CreateArmyRequest {
   name: string;
+  userId: number;
   nation: string;
   pointsLimit: number;
   units: ArmyUnit[];

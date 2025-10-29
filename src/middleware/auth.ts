@@ -27,6 +27,7 @@ export const authenticateToken = (req: AuthRequest, res: Response, next: NextFun
       res.status(403).json({ error: 'Invalid or expired token' });
       return;
     }
+    console.log('token ok');
     req.user = user;
     next();
   });

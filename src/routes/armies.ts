@@ -84,10 +84,15 @@ router.get('/:id', authenticateToken, (req: AuthRequest, res) => {
 
 // Create new army
 router.post('/', authenticateToken, (req: AuthRequest<{}, {}, CreateArmyRequest>, res) => {
-  console.log('create army post');
+  console.log('create army post ', req.body);
   try {
-    const { name, nation, pointsLimit, units, totalPoints } = req.body;
-    
+    const { name, userId, nation, pointsLimit, units, totalPoints } = req.body;
+    console.log('name: ', name);
+    console.log('userId: ', userId);
+    console.log('nation: ', nation);
+    console.log('pointslimit: ', pointsLimit);
+    console.log('units: ', units);
+    console.log('totalPoints: ', totalPoints);
     if (!name || !nation || !pointsLimit || !units) {
       res.status(400).json({ error: 'All fields are required' });
       return;
@@ -99,7 +104,7 @@ router.post('/', authenticateToken, (req: AuthRequest<{}, {}, CreateArmyRequest>
     db.run(
       `INSERT INTO armies (id, userId, name, nation, pointsLimit, units, totalPoints) 
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [armyId, req.user?.id, name, nation, pointsLimit, unitsJson, totalPoints],
+      [armyId, userId, name, nation, pointsLimit, unitsJson, totalPoints],
       function(err) {
         if (err) {
           console.error('Database error:', err);
