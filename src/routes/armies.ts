@@ -84,15 +84,15 @@ router.get('/:id', authenticateToken, (req: AuthRequest, res) => {
 
 // Create new army
 router.post('/', authenticateToken, (req: AuthRequest<{}, {}, CreateArmyRequest>, res) => {
-  console.log('create army post ', req.body);
+  console.log('create army post ');
   try {
     const { name, userId, nation, pointsLimit, units, totalPoints } = req.body;
-    console.log('name: ', name);
+    /*console.log('name: ', name);
     console.log('userId: ', userId);
     console.log('nation: ', nation);
     console.log('pointslimit: ', pointsLimit);
     console.log('units: ', units);
-    console.log('totalPoints: ', totalPoints);
+    console.log('totalPoints: ', totalPoints);*/
     if (!name || !nation || !pointsLimit || !units) {
       res.status(400).json({ error: 'All fields are required' });
       return;
