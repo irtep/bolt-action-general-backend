@@ -25,8 +25,10 @@ const app = express();
 const PORT = process.env.PORT || 5509;
 
 // Middleware
+app.use(cors({
+  origin: 'https://193.28.89.151:5509'
+}));
 app.use(helmet());
-app.use(cors());
 app.use(express.json());
 
 // Serve static files (your React build)
