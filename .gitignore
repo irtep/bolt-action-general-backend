@@ -2,3 +2,8 @@
 .env
 node_modules
 dist
+# Database
+*.sqlite
+*.sqlite3
+data/
+*.db
