@@ -44,7 +44,7 @@ app.get('*', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log('version 1.0.2');
+  console.log('version 1.0.3');
   console.log(`Server running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV}`);
 });
