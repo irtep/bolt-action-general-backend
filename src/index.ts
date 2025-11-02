@@ -1,3 +1,5 @@
+import https from 'https';
+import fs from 'fs';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -6,6 +8,11 @@ import dotenv from 'dotenv';
 
 import authRoutes from './routes/auth';
 import armiesRoutes from './routes/armies';
+
+const options = {
+  key: fs.readFileSync('key.pem'),
+  cert: fs.readFileSync('cert.pem')
+};
 
 dotenv.config();
 
@@ -26,8 +33,10 @@ const PORT = process.env.PORT || 5509;
 
 // Middleware
 app.use(cors({
-  origin: 'https://193.28.89.151:5509'
+  origin: [/^https?:\/\/localhost(:\d+)?$/, /^https?:\/\/193\.28\.89\.151:5509$/] // both http and https for my ip and all localhosts
 }));
+
+
 app.use(helmet());
 app.use(express.json());
 
@@ -43,8 +52,7 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../../frontend/dist/index.html'));
 });
 
-app.listen(PORT, () => {
-  console.log('version 1.0.3');
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV}`);
+https.createServer(options, app).listen(PORT, () => {
+  console.log('version 1.1.0');
+  console.log(`HTTPS server running on https://193.28.89.151:${PORT}`);
 });
